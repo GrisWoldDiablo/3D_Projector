@@ -33,11 +33,42 @@ struct aCubeOrigin{
 	};
 };
 
+template <int size, int aX, int aY, int aZ>
+struct aCubeAnchor {
+	bool active = true;
+	int anchor[3] = { aX,aY,aZ };
+	int cube3D[8][3] = {
+		{ anchor[0],		anchor[1],			anchor[2] },
+		{ anchor[0],		anchor[1] + size,	anchor[2] },
+		{ anchor[0] + size, anchor[1] + size,	anchor[2] },
+		{ anchor[0] + size, anchor[1],			anchor[2] },
+		{ anchor[0],		anchor[1],			anchor[2] + size },
+		{ anchor[0],		anchor[1] + size,	anchor[2] + size },
+		{ anchor[0] + size, anchor[1] + size,	anchor[2] + size },
+		{ anchor[0] + size, anchor[1],			anchor[2] + size }
+	};
+	void setAnchor(int x, int y, int z) {
+		anchor[0] = x;
+		anchor[1] = y;
+		anchor[2] = z;
+		// Refresh
+		cube3D[0][0] = anchor[0];			cube3D[0][1] = anchor[1];			cube3D[0][2] = anchor[2];
+		cube3D[1][0] = anchor[0];			cube3D[1][1] = anchor[1] + size;	cube3D[1][2] = anchor[2];
+		cube3D[2][0] = anchor[0] + size;	cube3D[2][1] = anchor[1] + size;	cube3D[2][2] = anchor[2];
+		cube3D[3][0] = anchor[0] + size;	cube3D[3][1] = anchor[1];			cube3D[3][2] = anchor[2];
+		cube3D[4][0] = anchor[0];			cube3D[4][1] = anchor[1];			cube3D[4][2] = anchor[2] + size;
+		cube3D[5][0] = anchor[0];			cube3D[5][1] = anchor[1] + size;	cube3D[5][2] = anchor[2] + size;
+		cube3D[6][0] = anchor[0] + size;	cube3D[6][1] = anchor[1] + size;	cube3D[6][2] = anchor[2] + size;
+		cube3D[7][0] = anchor[0] + size;	cube3D[7][1] = anchor[1];			cube3D[7][2] = anchor[2] + size;
+	}
+};
 Arduboy2 arduboy;
 const int CUBE_SIZE = 10;
 const int NUMBER_OF_CUBES = 8;
 //aCubeCentered<5> myCube[NUMBER_OF_CUBES];
-aCubeOrigin<CUBE_SIZE> oriCube[NUMBER_OF_CUBES];
+//aCubeOrigin<CUBE_SIZE> oriCube[NUMBER_OF_CUBES];
+aCubeAnchor<CUBE_SIZE, 0, 0, 0> oriCube[NUMBER_OF_CUBES];
+
 //aCube<10> myCube2[5];
 
 //int cube3D[8][3] = 
@@ -241,12 +272,9 @@ void drawOrigin() {
 }
 
 void moveCube(int x, int y, int z, int cubeNumber) {
-	for (int i = 0; i < 8; i++) {
-		oriCube[cubeNumber].cube3D[i][0] += x;
-		oriCube[cubeNumber].cube3D[i][1] += y;
-		oriCube[cubeNumber].cube3D[i][2] += z;
-	}
-	origin[0] += x;
-	origin[1] += y;
-	origin[2] += z;
+	oriCube[cubeNumber].setAnchor(
+		oriCube[cubeNumber].anchor[0] + x, 
+		oriCube[cubeNumber].anchor[1] + y, 
+		oriCube[cubeNumber].anchor[2] + z
+	);
 }
