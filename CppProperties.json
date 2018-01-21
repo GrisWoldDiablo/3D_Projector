@@ -7,6 +7,7 @@
         "${projectRoot}..\\3D_Projector",
         "${projectRoot}..\\libraries\\Arduboy2\\src",
         "${projectRoot}..\\..\\..\\..\\..\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\EEPROM\\src",
+        "${projectRoot}..\\libraries\\Arduboy-TinyFont\\src",
         "${projectRoot}..\\..\\..\\..\\..\\Program Files (x86)\\Arduino\\libraries",
         "${projectRoot}..\\..\\..\\..\\..\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries",
         "${projectRoot}..\\libraries",
