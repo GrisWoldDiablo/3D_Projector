@@ -28,6 +28,7 @@ struct aCube {
 	void updateCoord(float setTheta, float setPhi) {
 		theta = setTheta;
 		phi = setPhi;
+		
 		//0:0:0
 		p1.x = (int)(-sinf(theta) * x + cosf(theta) * y) + (WIDTH / 2);
 		p1.y = (int)(-cosf(theta) * sinf(phi) * x + (-sinf(theta) * sinf(phi)) * y + cosf(phi) * z) + (HEIGHT / 2);
@@ -207,10 +208,6 @@ const int NUMBER_OF_CUBES = 1;
 
 MyArray<aCube, NUMBER_OF_CUBES> myCubes;
 
-//aCubeCentered<5> myCube[NUMBER_OF_CUBES];
-//aCubeOrigin<CUBE_SIZE> oriCube[NUMBER_OF_CUBES];
-//aCubeAnchor<CUBE_SIZE, 0, 0, 0> oriCube[NUMBER_OF_CUBES]
-//aCube<10> myCube2[5];
 
 //int cube3D[8][3] = 
 //	{
@@ -411,10 +408,10 @@ void drawOrigin() {
 	);
 }
 
-void moveCube(int x, int y, int z, int selectedCube) {
-	myCubes[selectedCube].x += x;
-	myCubes[selectedCube].y += y;
-	myCubes[selectedCube].z += z;
+void moveCube(int x, int y, int z, int iS) {
+	myCubes[iS].x += x;
+	myCubes[iS].y += y;
+	myCubes[iS].z += z;
 }
 
 void drawCubeAnchor(int iS) {
@@ -432,105 +429,92 @@ void drawCubeAnchor(int iS) {
 	arduboy.drawLine(myCubes[iS].p1.x, myCubes[iS].p1.y, myCubes[iS].p3.x, myCubes[iS].p3.y);
 	arduboy.drawLine(myCubes[iS].p1.x, myCubes[iS].p1.y, myCubes[iS].p5.x, myCubes[iS].p5.y);
 	
-	if (	(myCubes[iS].p1.x >= myCubes[iS].p2.x && myCubes[iS].p1.y <= myCubes[iS].p5.y) 
-		||	(myCubes[iS].p1.x <= myCubes[iS].p2.x && myCubes[iS].p1.y >= myCubes[iS].p5.y)) {
+	if (	(myCubes[iS].p1.x > myCubes[iS].p2.x && myCubes[iS].p1.y < myCubes[iS].p5.y) 
+		||	(myCubes[iS].p1.x < myCubes[iS].p2.x && myCubes[iS].p1.y > myCubes[iS].p5.y)) {
 		arduboy.fillTriangle(
 			//0:0:0
-			(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-			(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2),
+			myCubes[iS].p1.x, myCubes[iS].p1.y,
 			//0:1:0
-			(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-			(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2),
+			myCubes[iS].p2.x, myCubes[iS].p2.y,
 			//0:0:1
-			(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-			(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * (myCubes[iS].z + myCubes[iS].size)) + (HEIGHT / 2)
+			myCubes[iS].p5.x, myCubes[iS].p5.y
 		);
-		arduboy.drawLine(
-			(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-			(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2),
-			(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-			(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)
-			,BLACK
+	}
+	if (	(myCubes[iS].p6.x < myCubes[iS].p5.x && myCubes[iS].p6.y > myCubes[iS].p2.y)
+		||	(myCubes[iS].p6.x > myCubes[iS].p5.x && myCubes[iS].p6.y < myCubes[iS].p2.y)) {
+		arduboy.fillTriangle(
+			//0:0:0
+			myCubes[iS].p2.x, myCubes[iS].p2.y,
+			//0:1:0
+			myCubes[iS].p6.x, myCubes[iS].p6.y,
+			//0:0:1
+			myCubes[iS].p5.x, myCubes[iS].p5.y
 		);
 	}
 
-	//
-	//if ((	(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2) 
-	//	>=	(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * myCubes[iS].y) + (WIDTH / 2)
-	//	&&	(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2) 
-	//	<=	(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)) 
-	//	|| ((int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2) 
-	//	<=	(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * myCubes[iS].y) + (WIDTH / 2)
-	//	&&	(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2) 
-	//	>=	(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2))
-	//	) {
-	//	arduboy.fillTriangle(
-	//		(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-	//		(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2),
-	//		(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-	//		(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2),
-	//		(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-	//		(int)(-cosf(theta) * sinf(phi) * (myCubes[iS].x + myCubes[iS].size) + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)
-	//	);
-	//}
-	//0:0:0
+	if ((myCubes[iS].p3.x > myCubes[iS].p1.x && myCubes[iS].p3.y < myCubes[iS].p7.y)
+		|| (myCubes[iS].p3.x < myCubes[iS].p1.x && myCubes[iS].p3.y > myCubes[iS].p7.y)) {
+		arduboy.fillTriangle(
+			//0:0:0
+			myCubes[iS].p3.x, myCubes[iS].p3.y,
+			//0:1:0
+			myCubes[iS].p1.x, myCubes[iS].p1.y,
+			//0:0:1
+			myCubes[iS].p7.x, myCubes[iS].p7.y
+		);
+	}
+
+	if ((myCubes[iS].p4.x < myCubes[iS].p1.x && myCubes[iS].p3.y < myCubes[iS].p1.y && myCubes[iS].p3.y < myCubes[iS].p1.y)
+		|| (myCubes[iS].p3.x > myCubes[iS].p4.x&& myCubes[iS].p3.x < myCubes[iS].p1.x && myCubes[iS].p3.y < myCubes[iS].p1.y)) {
+		arduboy.fillTriangle(
+			//0:0:0
+			myCubes[iS].p3.x, myCubes[iS].p3.y,
+			//0:1:0
+			myCubes[iS].p4.x, myCubes[iS].p4.y,
+			//0:0:1
+			myCubes[iS].p1.x, myCubes[iS].p1.y
+		);
+	}
+
+
+	
+	//0:0:0 #1
 	arduboy.drawPixel(myCubes[iS].p1.x, myCubes[iS].p1.y);
 	ardTiny.setCursor(myCubes[iS].p1.x, myCubes[iS].p1.y);
 	ardTiny.print("1");
-	//0:1:0
+	//0:1:0 #2
 	arduboy.drawPixel(myCubes[iS].p2.x, myCubes[iS].p2.y);
 	ardTiny.setCursor(myCubes[iS].p2.x, myCubes[iS].p2.y);
 	ardTiny.print("2");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)
-	);*/
-	//1:0:0
+	
+	//1:0:0 #3
 	arduboy.drawPixel(myCubes[iS].p3.x, myCubes[iS].p3.y);
 	ardTiny.setCursor(myCubes[iS].p3.x, myCubes[iS].p3.y);
 	ardTiny.print("3");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * (myCubes[iS].x + myCubes[iS].size) + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)
-	);*/
-	//1:1:0
+	
+	//1:1:0 #4
 	arduboy.drawPixel(myCubes[iS].p4.x, myCubes[iS].p4.y);
 	ardTiny.setCursor(myCubes[iS].p4.x, myCubes[iS].p4.y);
 	ardTiny.print("4");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * (myCubes[iS].x + myCubes[iS].size) + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * myCubes[iS].z) + (HEIGHT / 2)
-	);*/
-	//0:0:1
+	
+	//0:0:1 #5
 	arduboy.drawPixel(myCubes[iS].p5.x, myCubes[iS].p5.y);
 	ardTiny.setCursor(myCubes[iS].p5.x, myCubes[iS].p5.y);
 	ardTiny.print("5");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * (myCubes[iS].z + myCubes[iS].size)) + (HEIGHT / 2)
-	);*/
-	//0:1:1
+	
+	//0:1:1 #6
 	arduboy.drawPixel(myCubes[iS].p6.x, myCubes[iS].p6.y);
 	ardTiny.setCursor(myCubes[iS].p6.x, myCubes[iS].p6.y);
 	ardTiny.print("6");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * myCubes[iS].x + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * myCubes[iS].x + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * (myCubes[iS].z + myCubes[iS].size)) + (HEIGHT / 2)
-	);*/
-	//1:0:1
+	
+	//1:0:1 #7
 	arduboy.drawPixel(myCubes[iS].p7.x, myCubes[iS].p7.y);
 	ardTiny.setCursor(myCubes[iS].p7.x, myCubes[iS].p7.y);
 	ardTiny.print("7");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * myCubes[iS].y) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * (myCubes[iS].x + myCubes[iS].size) + (-sinf(theta) * sinf(phi)) * myCubes[iS].y + cosf(phi) * (myCubes[iS].z + myCubes[iS].size)) + (HEIGHT / 2)
-	);*/
-	//1:1:1
+	
+	//1:1:1 #8
 	arduboy.drawPixel(myCubes[iS].p8.x, myCubes[iS].p8.y);
 	ardTiny.setCursor(myCubes[iS].p8.x, myCubes[iS].p8.y);
 	ardTiny.print("8");
-	/*arduboy.drawPixel(
-		(int)(-sinf(theta) * (myCubes[iS].x + myCubes[iS].size) + cosf(theta) * (myCubes[iS].y + myCubes[iS].size)) + (WIDTH / 2),
-		(int)(-cosf(theta) * sinf(phi) * (myCubes[iS].x + myCubes[iS].size) + (-sinf(theta) * sinf(phi)) * (myCubes[iS].y + myCubes[iS].size) + cosf(phi) * (myCubes[iS].z + myCubes[iS].size)) + (HEIGHT / 2)
-	);*/
+	
 }
